@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneStop Cinema - Movies</title>
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OneStop Cinema</h1>
+        <nav>
+            <a class="nav-link active" aria-current="page" href="index.html">Movies</a>
+            <a href="personalrec.html">Personal Recommendation</a>
+            <a href="watchlist.html">Watch List</a>
+            <a href="addmovie.html">Add Movie</a>
+        </nav>
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" v-model="searchQuery" @input="filterMovies" placeholder="Search movies...">
+            <button @click="searchMovies">Search</button>
+        </div>
+    </header>
+    <main id="app">
+        <aside>
+            <h2>Looking for new movies?</h2>
+            <div>
+                <label for="IMDB_Rating">IMDB Rating:</label>
+                <!-- Dropdown for selecting IMDB rating -->
+                <select v-model="selectedRating" id="IMDB_Rating" aria-label="IMDB Rating">
+                    <option value="all">All IMDB Ratings</option>
+                    <option v-for="rating in filteredRatings" :value="rating">{{ rating }}</option>
+                </select>
+                <label for="Genre">Genre:</label>
+                <!-- Dropdown for selecting movie genre -->
+                <select v-model="selectedGenre" id="Genre" aria-label="Genre">
+                    <option value="all">All Genres</option>
+                    <option v-for="genre in filteredGenres" :value="genre">{{ genre }}</option>
+                </select>
+                <!-- Buttons to trigger filtering -->
+                <button @click.prevent="filterMovies">Filter</button>
+                <button @click.prevent="resetFilters">Reset</button>
+            </div>
+        </aside>
+        <section class="movies">
+            <!-- Display movies -->
+            <div id="movies-container" class="movie-container">
+                <div v-for="movie in filteredMovies" class="movie" @click="viewMovieDetails(movie)">
+                    <img :src="movie.Poster_Link" :alt="movie.Series_Title" style="max-width: 200px;">
+                    <h3>{{ movie.Series_Title }}</h3> 
+                    <p>Year: {{ movie.Released_Year }}</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script
+        type="module"
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+        nomodule
+        src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
+    <!-- Link to Vue.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <!-- Link to PapaParse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                moviesData: [],
+                filteredMovies: [],
+                searchQuery: '',
+                selectedRating: 'all',
+                selectedGenre: 'all',
+                imdbRatings: [],
+                genres: [],
+                isLoading: false // New property for loading indicator
+            },
+            mounted() {
+                this.fetchMoviesData();
+            },
+            methods: {
+                fetchMoviesData() {
+                    this.isLoading = true; // Show loading indicator
+                    fetch('movies.csv')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to fetch movies data');
+                            }
+                            return response.text();
+                        })
+                        .then(csv => {
+                            Papa.parse(csv, {
+                                header: true,
+                                complete: (results) => {
+                                    this.moviesData = results.data;
+                                    this.extractUniqueValues();
+                                    this.filteredMovies = this.moviesData; // Initially display all movies
+                                    this.isLoading = false; // Hide loading indicator
+                                }
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching or parsing the CSV file:', error);
+                            this.isLoading = false; // Hide loading indicator in case of error
+                        });
+                        //then aphabetize the movie titles
+                },
+                
+                extractUniqueValues() {
+                    // Extract unique IMDB ratings and genres from the moviesData array
+                    this.imdbRatings = [...new Set(this.moviesData.map(movie => movie.IMDB_Rating))];
+                    this.genres = [...new Set(this.moviesData.map(movie => movie.Genre))];
+                },
+                filterMovies() {
+                    // Filter movies based on selected options
+                    this.filteredMovies = this.moviesData.filter(movie => {
+                        const ratingMatch = this.selectedRating === 'all' || movie.IMDB_Rating === this.selectedRating;
+                        const genreMatch = this.selectedGenre === 'all' || movie.Genre === this.selectedGenre;
+                        return ratingMatch && genreMatch;
+                    });
+                },
+                resetFilters() {
+                    this.searchQuery = '';
+                    this.selectedRating = 'all';
+                    this.selectedGenre = 'all';
+                    this.filterMovies(); // Reset to display all movies
+                },
+                searchMovies() {
+                    this.moviesData (movie => {
+                        return movie.Series_Title === 'The Godfather';
+                    });
+                },
+                viewMovieDetails(movie) {
+                    // Pass the movie title as a query parameter to moviespecific.html
+                    window.location.href = `moviespecific.html?title=${encodeURIComponent(movie.Series_Title)}`;
+                }
+            },
+            computed: {
+                filteredRatings() {
+                    // Filter ratings based on the current selection of genre
+                    if (this.selectedGenre === 'all') {
+                        return this.imdbRatings;
+                    } else {
+                        return this.imdbRatings.filter(rating => {
+                            return this.moviesData.some(movie => movie.Genre === this.selectedGenre && movie.IMDB_Rating === rating);
+                        });
+                    }
+                },
+                filteredGenres() {
+                    // Filter genres based on the current selection of IMDB rating
+                    if (this.selectedRating === 'all') {
+                        return this.genres;
+                    } else {
+                        return this.genres.filter(genre => {
+                            return this.moviesData.some(movie => movie.IMDB_Rating === this.selectedRating && movie.Genre === genre);
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

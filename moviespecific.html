@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneStop Cinema - Movie Details</title>
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OneStop Cinema</h1>
+        <nav>
+            <a href="index.html">Movies</a>
+            <a href="personalrec.html">Personal Recommendation</a>
+            <a href="watchlist.html">Watch List</a>
+            <a href="addmovie.html">Add Movie</a>
+        </nav>
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" v-model="searchQuery" @input="filterMovies" placeholder="Search movies...">
+            <button @click="searchMovies">Search</button>
+        </div>
+    </header>
+    <div id="app">
+        <!-- Movie poster -->
+        <h1>{{ movie.Series_Title }}</h1>
+        <img :src="movie.Poster_Link" :alt="movie.Series_Title" style="max-width: 200px; width: 100%; height: auto; float: left;">
+        <!-- Movie information -->
+        <div class="movie-info"> 
+            <p><strong>Year:</strong> {{ movie.Released_Year }}</p>
+            <p><strong>Genre:</strong> {{ movie.Genre }}</p>
+            <p><strong>IMDB Rating:</strong> {{ movie.IMDB_Rating }}</p>
+            <p><strong>Overview:</strong> {{ movie.Overview }}</p>
+            <p><strong>Meta Score:</strong> {{ movie.Meta_score }}</p>
+            <p><strong>Director:</strong> {{ movie.Director }}</p>
+            <p><strong>Stars:</strong> {{ movie.Star1 }}, {{ movie.Star2 }}, {{ movie.Star3 }}, {{ movie.Star4 }}</p>
+            <p><strong>No of Votes:</strong> {{ movie.No_of_Votes }}</p>
+            <p><strong>Gross:</strong> {{ movie.Gross }}</p>
+            <!-- "Add to Watchlist" button -->
+            <button @click="addToWatchlist">Add to Watchlist</button>
+            <!-- Thumbs up and thumbs down buttons -->
+            <button @click="thumbsUp">👍</button>
+            <button @click="thumbsDown">👎</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        const movieTitle = queryParams.get('title');
+    
+        Papa.parse('movies.csv', {
+            download: true,
+            header: true,
+            complete: (results) => {
+                const moviesData = results.data;
+                const movie = moviesData.find(movie => movie.Series_Title === movieTitle);
+                if (movie) {
+                    new Vue({
+                        el: '#app',
+                        data: {
+                            movie: movie
+                        },
+                        methods: {
+                            addToWatchlist() {
+                                // Retrieve existing watchlist from local storage or initialize as an empty array
+                                let watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+                                // Add the current movie object to the watchlist
+                                watchlist.push(this.movie);
+                                // Store the updated watchlist back to local storage
+                                localStorage.setItem('watchlist', JSON.stringify(watchlist));
+                                alert('Added to Watchlist!');
+                            },
+                            thumbsUp() {
+                                // Get existing user preferences from local storage
+                                let userPreferences = JSON.parse(localStorage.getItem('userPreferences')) || {};
+                                // Increment thumbs up count for the current movie
+                                userPreferences[movieTitle] = (userPreferences[movieTitle] || 0) + 1;
+                                // Store the genre of the movie
+                                localStorage.setItem('likedGenre', this.movie.Genre);
+                                // Save updated user preferences to local storage
+                                localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+                                alert('Thanks for your feedback!');
+                            },
+                            thumbsDown() {
+                                // Get existing user preferences from local storage
+                                let userPreferences = JSON.parse(localStorage.getItem('userPreferences')) || {};
+                                // Decrement thumbs up count for the current movie
+                                userPreferences[movieTitle] = (userPreferences[movieTitle] || 0) - 1;
+                                // Save updated user preferences to local storage
+                                localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+                                alert('Thanks for your feedback!');
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Movie not found');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

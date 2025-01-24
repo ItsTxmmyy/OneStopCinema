@@ -1,0 +1,155 @@
+<!-- addmovie.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneStop Cinema - Add Movie</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 2em;
+        }
+        nav {
+            margin-top: 20px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: #ff0000;
+        }
+        .add-movie {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .add-movie h2 {
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button[type="submit"] {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #ffcc00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>OneStop Cinema</h1>
+        <nav>
+            <a href="index.html">Movies</a>
+            <a href="personalrec.html">Personal Recommendation</a>
+            <a href="watchlist.html">Watch List</a>
+            <a class="nav-link active" aria-current="page" href="addmovie.html">Add Movie</a>
+        </nav>
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" v-model="searchQuery" @input="filterMovies" placeholder="Search movies...">
+            <button @click="searchMovies">Search</button>
+        </div>
+    </header>
+    <section class="add-movie">
+        <h2>Add a Movie to Our Collection</h2>
+        <form id="movie-form">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="release-date">Release Date:</label>
+            <input type="date" id="release-date" name="release-date" required>
+
+            <label for="genre">Genre:</label>
+            <select id="genre" name="genre" required>
+                <option value="all">All Genres</option>
+                <option value="Action">Action</option>
+                <option value="Thriller">Thriller</option>
+                <option value="Comedy">Comedy</option>
+                <option value="Horror">Horror</option>
+                <option value="Drama">Drama</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Mystery">Mystery</option>
+                <option value="Western">Western</option>
+                <option value="Romance">Romance</option>
+            </select>
+
+            <div class="certificate-runtime">
+                <label for="certificate">Certificate:</label>
+                <input type="text" id="certificate" name="certificate">
+
+                <label for="runtime">Runtime (minutes):</label>
+                <input type="number" id="runtime" name="runtime" required>
+            </div>
+
+            <div class="imdb-meta">
+                <label for="imdb-rating">IMDB Rating:</label>
+                <input type="number" id="imdb-rating" name="imdb-rating" min="0" max="10" step="0.1" required>
+
+                <label for="meta-score">Metacritic Score:</label>
+                <input type="number" id="meta-score" name="meta-score" min="0" max="100" required>
+            </div>
+
+            <label for="director">Director:</label>
+            <input type="text" id="director" name="director" required>
+
+            <label for="starring">Starring (separate names with commas):</label>
+            <textarea id="starring" name="starring" required></textarea>
+
+            <label for="summary">Summary:</label>
+            <textarea id="summary" name="summary" required></textarea>
+
+            <label for="image">Upload Movie Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+
+            <button type="submit">Submit Movie</button>
+        </form>
+        <p id="message"></p>
+    </section>
+</main>
+    <script src="script.js"></script>
+</body>
+</html>

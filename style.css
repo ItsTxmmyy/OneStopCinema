@@ -1,0 +1,148 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+nav {
+    display: flex;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+nav a:hover {
+    color: #ff0000;
+}
+
+main {
+    flex: 1;
+    display: flex;
+}
+
+aside {
+    width: 20%;
+    padding: 1rem;
+    background-color: #f0f0f0;
+}
+
+aside form {
+    margin-bottom: 1rem;
+}
+
+aside label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+aside select,
+aside button {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+section {
+    flex: 1;
+    padding: 1rem;
+}
+
+/* Loading indicator */
+.loading-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+}
+
+/* Search bar */
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.search-bar input[type="text"] {
+    padding: 8px;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #69717a;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #0056b3;
+}
+
+/* Navigation menu */
+nav {
+    margin-top: 20px;
+}
+
+nav a {
+    margin-right: 20px;
+    color: #fff;
+    text-decoration: none;
+}
+
+nav a.active {
+    font-weight: bold;
+    color: #ff0000; /* Change the color to highlight the active link */
+}
+
+/* Additional styles for movie container */
+.movie-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+}
+
+.movie {
+    margin: 0 1rem 2rem;
+    text-align: center;
+    width: 300px;
+    cursor: pointer; /* Add cursor pointer to indicate clickable */
+}
+
+.movie img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+}
+
+.movie:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+

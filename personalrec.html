@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneStop Cinema - Personal Recommendations</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>OneStop Cinema</h1>
+        <nav>
+            <a href="index.html">Movies</a>
+            <a class="nav-link active" aria-current="page" href="personalrec.html">Personal Recommendation</a>
+            <a href="watchlist.html">Watch List</a>
+            <a href="addmovie.html">Add Movie</a>
+        </nav>
+        <!-- Search bar -->
+        <div class="search-bar">
+            <input type="text" v-model="searchQuery" @input="filterMovies" placeholder="Search movies...">
+            <button @click="searchMovies">Search</button>
+        </div>
+    </header>
+    <main>
+        <section class="personal-recommendation">
+            <h2>We Recommend These Movies for You</h2>
+            <p>Based on your liked movies, here are some movies you might enjoy:</p>
+        
+            <div id="recommendations" class="movie-container">
+                <!-- Movie posters and information will be added here -->
+            </div>
+        </section>
+    </main>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script>
+        Papa.parse('movies.csv', {
+            download: true,
+            header: true,
+            complete: (results) => {
+                const moviesData = results.data;
+                // Retrieve liked movies from local storage
+                const likedMovies = JSON.parse(localStorage.getItem('likedMovies')) || [];
+                // Filter movies based on liked movies
+                const recommendedMovies = moviesData.filter(movie => likedMovies.includes(movie.Movie_Id));
+                // Sort recommended movies by release date
+                recommendedMovies.sort((a, b) => new Date(b.Release_Date) - new Date(a.Release_Date));
+                // Display recommended movies
+                const recommendationsContainer = document.getElementById('recommendations');
+                recommendedMovies.forEach(movie => {
+                    // Create a div for each movie
+                    const movieDiv = document.createElement('div');
+                    movieDiv.classList.add('movie');
+                    // Create clickable movie posters with brief information
+                    const movieLink = document.createElement('a');
+                    movieLink.href = 'movieDetails.html?title=' + encodeURIComponent(movie.Series_Title); // Add the link to view movie details
+                    const movieImage = document.createElement('img');
+                    movieImage.src = movie.Poster_Link;
+                    movieImage.alt = movie.Series_Title;
+                    movieLink.appendChild(movieImage);
+                    // Create a span element for the movie title
+                    const movieTitle = document.createElement('span');
+                    movieTitle.textContent = movie.Series_Title;
+                    // Append the movie image and title to the movie div
+                    movieDiv.appendChild(movieLink);
+                    // Append the movie div to the recommendations container
+                    recommendationsContainer.appendChild(movieDiv);
+                });
+            }
+        });
+    </script>    
+</body>
+</html>
